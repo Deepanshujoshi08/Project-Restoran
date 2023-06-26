@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+
+{% block start %}
+
+{%load static%}
+
+
+
+<div class="py-5 bg-dark hero-header mb-5">
+    <div class="container  my-5 pt-5 pb-4">
+        <div class="col-md-5 m-auto nav_bg_clr d-flex align-items-center  wow fadeInDown">
+            <div class="p-5" data-wow-delay="0.2s">
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    
+                    <h5 class="section-title ff-secondary text-start text-danger fw-normal">Create Account</h5>
+                    <h1 class="text-white mb-4">Register</h1>
+
+
+                    {% if messages %}
+                    <h4 class="text-center text-danger ">
+                        {% for a in messages %}
+                        {{a}}
+                        {% endfor %}
+            
+                    </h4>
+                    {% endif %}
+
+
+
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <input type="text" required name="first_name" class="form-control" id="name" placeholder="First name">
+                                <label for="name">First Name</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <input type="text" required name="last_name" class="form-control" id="name" placeholder="Last name">
+                                <label for="name">Last Name</label>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="form-floating">
+                                <input type="text" required name="username" class="form-control" id="name" placeholder="Username">
+                                <label for="name">Username</label>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="form-floating">
+                                <input type="email" required name="email" class="form-control" id="name" placeholder="Email Id">
+                                <label for="name">Email</label>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="form-floating">
+                                <input type="password" required name="password" class="form-control" id="password" placeholder="Create password">
+                                <label for="name">Create Password</label>
+                            </div>
+                        </div>
+                        <!-- <div class="col-md-6">
+                            <div class="form-floating">
+                                <input type="password" name="password" class="form-control" id="password" placeholder="Confirm Password">
+                                <label for="name">Confirm Password</label>
+                            </div>
+                        </div> -->
+                        <div class="col-md-12">
+                            <div class="form-floating">
+                                <input type="checkbox" required> <span class="text-white">I accept <a href="/additional/" class="text-danger">Term of Use</a></span>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <button class="btn btn-danger w-100 py-3" type="submit">Register</button>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="form-floating text-light text-center">Already have account? <a href="/login/" class="text-danger">Login!</a> </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+
+
+
+
+{% endblock %}

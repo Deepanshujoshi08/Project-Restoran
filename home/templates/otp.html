@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+
+{% block start %}
+
+{%load static%}
+
+
+
+<div class="py-5 bg-dark hero-header mb-5">
+    <div class="container  my-5 pt-5 pb-4">
+        <div class="col-md-5 m-auto nav_bg_clr d-flex align-items-center  wow fadeInDown">
+            <div class="p-5" data-wow-delay="0.2s">
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    
+                    <h5 class="section-title ff-secondary text-start text-danger fw-normal">Create Account</h5>
+                    <h1 class="text-white mb-4">Register</h1>
+
+
+                    {% if messages %}
+                    <h4 class="text-center text-danger ">
+                        {% for a in messages %}
+                        {{a}}
+                        {% endfor %}
+            
+                    </h4>
+                    {% endif %}
+
+
+
+                    <div class="row g-3">
+                        
+                        <div class="col-md-12 d-none">
+                            <div>
+                                <input type="text" required name="user" class="form-control" id="otp" value="{{username}}" placeholder="Enter the Otp here">
+                                <label for="user">username</label>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div>
+                                <input type="number" required name="otp" class="form-control" id="otp" placeholder="Enter the Otp here">
+                                <!-- <label for="otp">OTP</label> -->
+                            </div>
+                        </div>
+                        
+                        <div class="col-12">
+                            <button class="btn btn-danger w-100 py-3" type="submit">Submit</button>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="form-floating text-light text-center">Didn't recieve Otp ? <a href="/resend-otp/{{username}}" class="text-danger">Resend</a> </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+
+
+
+
+{% endblock %}

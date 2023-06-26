@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+
+{% block start %}
+
+{%load static%}
+
+
+
+<div class="py-5 bg-dark hero-header mb-5">
+    <div class="container  my-5 pt-5 pb-4">
+        <div class="col-md-5 m-auto nav_bg_clr d-flex align-items-center  wow fadeInDown">
+            <div class="p-5" data-wow-delay="0.2s">
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    
+                    <h3 class="text-center fw-normal ff-secondary text-danger mb-5 ">Edit Your Profile</h3>
+
+
+                    <div class="row g-3">
+                        <h5 class="col-4 text-danger">User Name :</h5>
+                        <h5 class="col-8 text-light">{{request.user}}</h5>
+
+                        <h5 class="col-4 text-danger">Email Id :</h5>
+                        <h6 class="col-8 text-light">{{request.user.email}}</h6>
+
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <input type="text" name="first_name" value="{{request.user.first_name}}" class="form-control" id="name" placeholder="First name">
+                                <label>First Name</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <input type="text" name="last_name" value="{{request.user.last_name}}" class="form-control" id="name" placeholder="Last name">
+                                <label>Last Name</label>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="form-floating">
+                                <input type="number" name="number" value="{{request.user.number}}" class="form-control" id="number" placeholder="Email Id">
+                                <label >Mobile Number</label>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="form-floating">
+                                <input type="password" name="password" class="form-control" id="password" placeholder="Change password">
+                                <label>Change Password</label>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="form-floating">
+                                <input type="file" class="form-control" >
+                                <label>Choose Profile image</label>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="form-floating">
+                                <input type="checkbox" required> <span class="text-white">I accept <a href="/additional/" class="text-danger">Term of Use</a></span>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <button class="btn btn-danger w-100 py-3" type="submit">Update</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+
+
+
+
+{% endblock %}

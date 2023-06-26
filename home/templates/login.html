@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+
+{% block start %}
+
+{%load static%}
+
+
+
+<div class="py-5 bg-dark hero-header mb-5">
+    <div class="container my-5 pt-5 pb-4">
+        <div class="col-md-5 m-auto nav_bg_clr d-flex align-items-center wow fadeInUp" >
+            <div class="p-5 ">
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    
+                    <h5 class="section-title ff-secondary text-start text-danger fw-normal">Login with Registered Account</h5>
+                    <h1 class="text-white mb-4">Login</h1>
+                    
+                    {% if messages %}
+                    <h4 class="text-center text-danger ">
+                        {% for message in messages %}
+                        {% if 'safe' in message.tags %}{{ message|safe }}{% else %}{{ message }}{% endif %}
+                        {% endfor %}
+            
+                    </h4>
+                    {% endif %}
+            
+                
+                    <div class="row g-3">
+                        <div class="col-md-12">
+                            <div class="form-floating">
+                                <input type="text" required name="username" class="form-control" placeholder="username">
+                                <label for="username">Username</label>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="form-floating">
+                                <input type="password" required name="password" class="form-control" id="password" placeholder="Password">
+                                <label for="password"> Password</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <input type="checkbox"><span class="text-danger"> Remember me</span>
+                            </div>
+                        </div>
+                        <div class="col-md-6 text-end">
+                            <a href="/additional/" class="form-floating text-danger">
+                                Forgot Password?
+                            </a>
+                        </div>
+                        <div class="col-12">
+                            <button class="btn btn-danger w-100 py-3" type="submit">Login</button>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="form-floating text-light text-center">Don't have account? <a href="/register/" class="text-danger">Register Now!</a> </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+
+
+
+
+{% endblock %}
