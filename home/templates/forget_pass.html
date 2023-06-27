@@ -10,11 +10,11 @@
     <div class="container  my-5 pt-5 pb-4">
         <div class="col-md-5 m-auto nav_bg_clr d-flex align-items-center  wow fadeInDown">
             <div class="p-5" data-wow-delay="0.2s">
-                <form method="post" action="" enctype="multipart/form-data">
+                <form method="post" enctype="multipart/form-data">
                     {% csrf_token %}
                     
-                    <h5 class="section-title ff-secondary text-start text-danger fw-normal">Verfiying Account</h5>
-                    <h1 class="text-white mb-4">Enter Otp</h1>
+                    <h5 class="section-title ff-secondary text-start text-danger fw-normal">Forget Password</h5>
+                    <h1 class="text-white mb-4">Enter your Username or Email</h1>
 
 
                     {% if messages %}
@@ -30,16 +30,10 @@
 
                     <div class="row g-3">
                         
-                        <div class="col-md-12 d-none">
-                            <div>
-                                <input type="text" required name="user" class="form-control" id="otp" value="{{username}}" placeholder="Enter the Otp here">
-                                <label for="user">username</label>
-                            </div>
-                        </div>
                         <div class="col-md-12">
-                            <div>
-                                <input type="number" required name="otp" class="form-control" id="otp" placeholder="Enter the Otp here">
-                                <!-- <label for="otp">OTP</label> -->
+                            <div class="form-floating">
+                                <input type="text" required name="user" class="form-control" id="otp" value="{{username}}" placeholder="Enter the Username or Email">
+                                <label for="user">Username or Email</label>
                             </div>
                         </div>
                         
@@ -47,7 +41,7 @@
                             <button class="btn btn-danger w-100 py-3" type="submit">Submit</button>
                         </div>
                         <div class="col-md-12">
-                            <div class="form-floating text-light text-center">Didn't recieve Otp ? <a href="/resend-otp/{{username}}" class="text-danger">Resend</a> </div>
+                            <div class="form-floating text-light text-center">Already have account? <a href="/login/" class="text-danger">Login!</a> </div>
                         </div>
                     </div>
                 </form>

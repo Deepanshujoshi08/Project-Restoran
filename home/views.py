@@ -5,7 +5,7 @@ from django.contrib.auth import authenticate, login, logout
 from .utils import *
 from django.contrib.auth.decorators import login_required
 from .models import *
-
+from django.db.models import Q
 
 # Create your views here.
 
@@ -57,35 +57,14 @@ def register(req):
         user.set_password(password)
         user.save()
         
-        messages.info(req, 'Email Sent, Please verify your email address')
-        
+        req.session['purpose'] = 'register'
+        messages.info(req, 'Otp sent to you email successfully. Please check your email address')
         return redirect("/otp?username="+username)
 
     return render(req, 'register.html')
 
     # return render(request,'register.html')
 
-def otp_verify(req): 
-    if req.method == 'POST':
-        user = req.POST.get('user')
-        input_otp = req.POST.get('otp')
-        queryset = otp.objects.get(user = user)
-        
-        original_otp = queryset.otp_no
-        print(original_otp)
-        if input_otp != original_otp:
-            messages.error(req, 'Otp incorrect')
-            return redirect('/otp?username='+user)
-        
-        queryset2 = User.objects.get(username = user)
-        queryset2.is_active = True
-        queryset2.save()
-        queryset.delete()
-        messages.success(req, 'Resgistration successful')
-        return redirect('/login/')
-
-    username = req.GET.get('username')
-    return render(req, 'otp.html',{'username':username})
 
 
 def login_page(req):
@@ -127,9 +106,86 @@ def login_page(req):
 
 
 
-    # return render(request,'login.html')
+def forget_pass(req):
+    if req.method == 'POST':
+        user = req.POST.get('user')
+
+        queryset = User.objects.filter(
+            Q(username = user)|
+            Q(email = user)
+        )
+
+        print(queryset)
+
+        if not queryset.exists():
+            messages.error(req, 'User does not exist')
+            return redirect('/forget-password')
+
+        user_obj = User.objects.get(
+            Q(username = user)|
+            Q(email = user)
+        )
+        send_email_to_user(user_obj.username, user_obj.email)
+        req.session['purpose'] = 'forget'
+        messages.success(req, 'otp sent successfully to email ')
+        return redirect("/otp?username="+ user)
+    
+    return render(req, 'forget_pass.html')
 
 
+
+def otp_verify(req): 
+
+    if req.method == 'POST':
+        user = req.POST.get('user')
+        input_otp = req.POST.get('otp')
+        queryset = otp.objects.get(user = user)
+        
+        original_otp = queryset.otp_no
+        print(original_otp)
+        if input_otp != original_otp:
+            messages.error(req, 'Otp incorrect')
+            return redirect('/otp?username='+user)
+        
+        queryset2 = User.objects.get(username = user)
+        queryset2.is_active = True
+        queryset2.save()
+        queryset.delete()
+        if req.session.get('purpose') == 'register':
+            messages.success(req, 'Resgistration successful')
+            return redirect('/login/')
+        
+        if req.session.get('purpose') == 'forget':
+            req.session['user'] = user
+            messages.info(req, 'Creat new password')
+            return redirect('/change-password/')
+        
+
+    username = req.GET.get('username')
+    return render(req, 'otp.html',{'username':username})
+
+
+def change_password(req):
+    if req.method == 'POST':
+        user = req.session.get('user')
+        user_obj = User.objects.get(username = user)
+    
+        password = req.POST.get('password')
+        cnf_password = req.POST.get('cnf_password')
+
+        if password != cnf_password:
+            messages.error(req, 'Password not matching')
+            req.session['user'] = user
+            return redirect('otp/change-password')
+        
+        user_obj.set_password(password)
+        user_obj.save()
+        messages.success(req, 'Password changed successfully')
+        return redirect('/login/')
+    
+    return render(req, 'change_password.html')
+
+    
 
 def logout_page(req):
     logout(req)

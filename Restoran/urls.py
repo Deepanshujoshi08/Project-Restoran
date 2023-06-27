@@ -41,4 +41,6 @@ urlpatterns = [
     path('additional/', additional, name='additional'),
     path('extra/', extra, name='extra'),
     path('otp/', otp_verify,  name='otp'),
+    path('forget-password/', forget_pass,  name='forget_pass'),
+    path('change-password/', change_password,  name='change_password'),
 ]
