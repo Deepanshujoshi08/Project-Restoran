@@ -26,3 +26,11 @@ def send_email_to_user(user,email):
     
     
 
+# def orders(user,name):
+#         # user_obj = User.objects.all()
+#         item = Menu.objects.filter(item_name = name)
+#         quantity = 1
+#         order = Items.objects.create(name = item, quantity = quantity) 
+#         order.save()
+#         return order
+        

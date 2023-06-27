@@ -126,3 +126,10 @@
     
 })(jQuery);
 
+
+
+// add order to cart
+
+// order = [
+//     {}
+// ];

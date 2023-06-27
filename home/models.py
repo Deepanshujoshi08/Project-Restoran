@@ -21,3 +21,11 @@ class Menu(models.Model):
 
     def __str__(self) -> str:
         return self.item_name
+    
+class Orders(models.Model):
+    user = models.CharField(max_length=200)
+    name = models.ForeignKey(Menu, related_name='item_name', on_delete=models.CASCADE)
+    quantity = models.IntegerField()
+
+    def __str__(self) -> str:
+        return self.name
