@@ -22,24 +22,8 @@ def services(request):
 def contact(request):
     return render(request,'contact.html')
 
-def menu(request):       
-        
-    queryset = Menu.objects.all()
-    order_obj = Orders.objects.all()
-
-    context = {'menu_items': queryset, 'order_obj': order_obj}
-    return render(request,'menu.html', context)
 
 
-def orders(request):
-    user = request.user.username
-    id = request.POST.get('id') 
-    item = Menu.objects.get(id = id)
-    quantity = 1
-    order = Orders.objects.create(user = user, name = item.item_name, quantity = quantity) 
-    order.save()
-    print('SUCCESSFUL', order)
-    return redirect('/menu/')
 
 
 @login_required(login_url='/login/') 

@@ -522,3 +522,8 @@ a{
     bottom: 45px;
     /* z-index: 99; */   
 }
+
+
+.quantity{
+    width: 40px;
+}

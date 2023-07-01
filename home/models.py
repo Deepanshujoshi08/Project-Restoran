@@ -12,20 +12,3 @@ class otp(models.Model):
     def __str__(self) -> str:
         return self.otp_no
 
-class Menu(models.Model):
-    item_name = models.CharField(max_length=100)
-    item_description = models.TextField()
-    item_price = models.IntegerField()
-    item_image = models.ImageField(upload_to="menu_items")
-
-
-    def __str__(self) -> str:
-        return self.item_name
-    
-class Orders(models.Model):
-    user = models.CharField(max_length=200)
-    name = models.ForeignKey(Menu, related_name='item_name', on_delete=models.CASCADE)
-    quantity = models.IntegerField()
-
-    def __str__(self) -> str:
-        return self.name

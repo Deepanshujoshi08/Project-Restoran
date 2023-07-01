@@ -33,6 +33,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'channels',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -42,7 +43,9 @@ INSTALLED_APPS = [
 ]
 
 EXTERNAL_APPS = [
-    'home'
+    'home',
+    'Menu',
+    'Cart'
 ]
 
 INSTALLED_APPS += EXTERNAL_APPS
@@ -75,7 +78,8 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'Restoran.wsgi.application'
+# WSGI_APPLICATION = 'Restoran.wsgi.application'
+ASGI_APPLICATION = 'Restoran.asgi.application'
 
 
 # Database
@@ -148,3 +152,16 @@ EMAIL_USE_TLS = True
 EMAIL_PORT = 587
 EMAIL_HOST_USER = 'princesandhu1011@gmail.com'
 EMAIL_HOST_PASSWORD = 'ylqgjkidlykmtdde'
+
+
+
+# Channels redis
+
+CHANNEL_LAYERS = {
+        "default": {
+            "BACKEND": "channels_redis.core.RedisChannelLayer",
+            "CONFIG": {
+                "hosts": [("localhost", 6379)],
+            },
+        },
+    }

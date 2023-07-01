@@ -17,6 +17,8 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from home.views import *
+from Menu.views import *
+from Cart.views import *
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -44,5 +46,5 @@ urlpatterns = [
     path('forget-password/', forget_pass,  name='forget_pass'),
     path('change-password/', change_password,  name='change_password'),
 
-    path('orders/', orders, name='orders'),
+    path('add-to-cart/', add_to_cart, name='add_to_cart'),
 ]
