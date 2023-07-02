@@ -5,7 +5,7 @@ from Cart.models import Cart_items
 from django.db.models import Q
 
 def menu(request):       
-    user = request.user.username
+    user = request.user.id
     print(user)
     products = Menu.objects.all()
 
@@ -15,11 +15,12 @@ def menu(request):
     if len(cart_items) > 0:
         for itm in cart_items:
             filter_products = Menu.objects.filter(item_name__contains=itm)
-            if filter_products.exists():
+            print(filter_products.count())
+            if filter_products:
                 print('yes exists')
                 cart_item = Cart_items.objects.get(
                     Q(user = user)&
-                    Q(item = itm )
+                    Q(item = itm.item )
                 )
 
                 filter_products.update(in_cart=True, quantity=cart_item.quantity)
@@ -39,6 +40,6 @@ def menu(request):
 
             
 
-    context = {'menu_items': products, 'cart': cart_items}
+    context = {'menu_items': products, 'cart_items': len(cart_items)}
     return render(request,'menu.html', context)
 

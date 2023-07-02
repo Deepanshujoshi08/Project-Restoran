@@ -527,3 +527,23 @@ a{
 .quantity{
     width: 40px;
 }
+
+.cart-icon{
+    position: relative;
+    top: 0;
+    left: 0;
+}
+
+.cart-icon i{
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.cart-icon span{
+    position: absolute;
+    top: .5em;
+    left: .4em;
+    font-size: 14px;
+    color: white;
+}

@@ -45,7 +45,8 @@ INSTALLED_APPS = [
 EXTERNAL_APPS = [
     'home',
     'Menu',
-    'Cart'
+    'Cart',
+    'Accounts',
 ]
 
 INSTALLED_APPS += EXTERNAL_APPS
