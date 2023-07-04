@@ -6,7 +6,7 @@ from .utils import *
 from django.contrib.auth.decorators import login_required
 from .models import *
 from django.db.models import Q
-
+from Cart.models import *
 
 # Create your views here.
 
@@ -35,7 +35,7 @@ def register(req):
         messages.info(req, 'Otp sent to you email successfully. Please check your email address')
         return redirect("/otp?username="+username)
 
-    return render(req, 'register.html')
+    return render(req, 'register.html', {'title': 'Register'})
 
     # return render(request,'register.html')
 
@@ -70,13 +70,26 @@ def login_page(req):
             return redirect('/login/')       
         else:
             login(req, user)
+            uptaded_cart = Cart_items.objects.filter(user = req.user.id)
+            req.session['cart'] = len(uptaded_cart)
+        
+            print('length of cart' + str(req.session['cart']))
             return redirect('/menu/')
     
     if req.user.is_authenticated:
         print("You must be logged in")
-        return redirect('/')
 
-    return render(req, 'login.html')
+        return redirect('/')
+    
+    if req.user:
+        uptaded_cart = Cart_items.objects.filter(user = req.user.id)
+        req.session['cart'] = len(uptaded_cart)
+        
+        print('length of cart' + str(req.session['cart']))
+    else:
+        req.session['cart'] = 0
+
+    return render(req, 'login.html', {'title': 'Login'})
 
 
 

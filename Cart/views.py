@@ -26,10 +26,12 @@ def add_to_cart(request):
         else:
             order = Cart_items.objects.create(user = user, item = menu, quantity = qnt) 
             order.save()
+
+            uptaded_cart = Cart_items.objects.filter(user = request.user.id)
+            request.session['cart'] = len(uptaded_cart)
         
-        
+            print('length of cart' + str(request.session['cart']))
             
-        
         return redirect('/menu/')
     
     else:
@@ -48,6 +50,10 @@ def remove_item(req, id):
     menu.in_cart = False
     menu.save()
     cart.delete()
+    uptaded_cart = Cart_items.objects.filter(user = req.user.id)
+    req.session['cart'] = len(uptaded_cart)
+        
+    print('length of cart' + str(req.session['cart']))
     return redirect('/menu/')
 
 

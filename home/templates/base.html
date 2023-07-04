@@ -85,7 +85,7 @@
                     <!-- <a href="/booking/" class="btn btn-danger py-2 px-4">Book A Table</a> -->
                     <div class="cart-icon h4">
                         <i class="fas fa-shopping-bag text-danger" aria-hidden="true"></i>
-                        <span>{{cart_items}}</span>
+                        <span>{{request.session.cart}}</span>
                     </div>
                     <div class="clr"></div>
                     <div class="d-flex">
@@ -119,6 +119,10 @@
                     </div>
                 </div>
             </div>
+
+            {% elif title == 'Login' or title == 'Register' %}
+
+
 
             {% else %}
             <div class="py-5 bg-dark hero-header mb-5">
