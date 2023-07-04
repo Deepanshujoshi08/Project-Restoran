@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'debug_toolbar',
 ]
 
 EXTERNAL_APPS = [
@@ -59,6 +60,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
 ]
 
 ROOT_URLCONF = 'Restoran.urls'
@@ -154,6 +156,9 @@ EMAIL_PORT = 587
 EMAIL_HOST_USER = 'princesandhu1011@gmail.com'
 EMAIL_HOST_PASSWORD = 'ylqgjkidlykmtdde'
 
+INTERNAL_IPS = [
+    '127.0.0.1',
+]
 
 
 # Channels redis

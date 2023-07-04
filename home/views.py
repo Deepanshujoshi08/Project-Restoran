@@ -10,16 +10,16 @@ from django.db.models import Q
 
 
 def home(request):
-    return render(request,'index.html')
+    return render(request,'index.html', {'title': 'Home'})
 
 def about(request):
-    return render(request,'about.html')
+    return render(request,'about.html', {'title': 'About'})
 
 def services(request):
-    return render(request,'service.html')
+    return render(request,'service.html', {'title': 'Services'})
 
 def contact(request):
-    return render(request,'contact.html')
+    return render(request,'contact.html', {'title': 'Contact'})
 
 
 
@@ -27,7 +27,7 @@ def contact(request):
 
 @login_required(login_url='/login/') 
 def booking(request):
-    return render(request,'booking.html')
+    return render(request,'booking.html', {'title': 'Booking'})
 
 def team(request):
     return render(request,'team.html')

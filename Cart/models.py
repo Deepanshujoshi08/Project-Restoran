@@ -8,7 +8,6 @@ from Menu.models import *
 
 class Cart_items(models.Model):
     user = models.ForeignKey(User, related_name='user', on_delete=models.CASCADE)
-    # item = models.CharField(max_length=200)
     item = models.ForeignKey(Menu, related_name='item', on_delete=models.CASCADE)
     quantity = models.IntegerField()
 

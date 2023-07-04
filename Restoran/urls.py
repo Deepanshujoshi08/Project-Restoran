@@ -15,7 +15,7 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path,include
 from home.views import *
 from Menu.views import *
 from Cart.views import *
@@ -48,4 +48,12 @@ urlpatterns = [
     path('change-password/', change_password,  name='change_password'),
 
     path('add-to-cart/', add_to_cart, name='add_to_cart'),
+    path('menu/remove/<id>', remove_item, name='remove_item'),
+
+    path('cart/', cart, name='cart')
 ]
+
+
+if settings.DEBUG:
+    import debug_toolbar
+    urlpatterns += path('__debug__/', include(debug_toolbar.urls)),

@@ -34,3 +34,22 @@ def add_to_cart(request):
     
     else:
         return redirect('/login/')
+
+
+def remove_item(req, id):
+    user = req.user
+    menu = Menu.objects.get(id = id)
+    cart = Cart_items.objects.get(
+        Q(user = user)&
+        Q(item_id = id)
+    )
+
+    menu.quantity = 0
+    menu.in_cart = False
+    menu.save()
+    cart.delete()
+    return redirect('/menu/')
+
+
+def cart(req):
+    return render(req, 'cart.html', {'title': 'Cart'})

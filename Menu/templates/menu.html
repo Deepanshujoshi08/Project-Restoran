@@ -4,24 +4,6 @@
 
 {%load static%}
 
-
-
-
-<div class="py-5 bg-dark hero-header mb-5">
-    <div class="container text-center my-5 pt-5 pb-4">
-        <h1 class="display-3 text-white mb-3 animated slideInDown">Food Menu</h1>
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb justify-content-center text-uppercase">
-                <li class="breadcrumb-item"><a class="text-danger text-decoration-none" href="/">Home</a></li>
-                <li class="breadcrumb-item text-white active" aria-current="page">Menu</li>
-            </ol>
-        </nav>
-    </div>
-</div>
-</div>
-<!-- Navbar & Hero End -->
-
-
 <!-- Menu Start -->
 <div class="container-xxl py-5">
     <div class="container">
@@ -66,36 +48,40 @@
             </ul>
 
 
+
             <!-- menu items -->
             <div class="tab-content">
 
                 <!-- filter 1 -->
                 <div id="tab-1" class="tab-pane fade show p-0 active">
                     <div class="row g-4">
-                        {% for a in menu_items %}
+                        {% for item in menu_items %}
 
                         <div class="col-lg-6">
                             <div class="d-flex align-items-center">
-                                <img class="flex-shrink-0 img-fluid rounded" src=" /static/{{a.item_image}}"
+                                <img class="flex-shrink-0 img-fluid rounded" src=" /static/{{item.item_image}}"
                                     alt="menu_item_image" style="width: 80px; max-height: 50px;">
                                 <div class="w-100 d-flex flex-column text-start ps-4">
                                     <h5 class="d-flex justify-content-between border-bottom pb-2">
-                                        <span>{{a.item_name}}</span>
-                                        <span class="text-danger">₹ {{a.item_price}}</span>
+                                        <span>{{item.item_name}}</span>
+                                        <span class="text-danger">₹ {{item.item_price}}</span>
                                     </h5>
                                     <div class="d-flex">
-                                        <small class="fst-italic">{{a.item_description}}</small>
+                                        <small class="fst-italic">{{item.item_description}}</small>
 
                                         <form method="post" action="/add-to-cart/">
                                             {% csrf_token %}
-                                            <input type="text" class="d-none" name="id" value="{{a.id}}">
+                                            <input type="text" class="d-none" name="id" value="{{item.id}}">
                                             <div class="d-flex">
-                                                {% if a.quantity > 0 %}
-                                                    <input type="number" class="quantity" name="quantity" value="{{a.quantity}}">
+                                                {% if item.quantity %}
+                                                    <input type="number" class="quantity" name="quantity" value="{{item.quantity}}">
                                                 {% else %}
                                                     <input type="number" class="quantity" name="quantity" value="1">
                                                 {% endif %}
-                                                <h6><button  class="btn btn-danger mx-2" data-itemid="{{a.id}}">Add</button></h6>
+                                                <h6><button class="btn btn-danger mx-2" data-itemid="{{item.id}}">Add</button></h6>
+                                                {% if item.quantity %}
+                                                <h6><a href="remove/{{item.id}}" class="btn btn-danger" data-itemid="{{item.id}}">Remove</a></h6>
+                                                {% endif %}
                                             </div>
                                                 
                                         </form>

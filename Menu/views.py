@@ -8,13 +8,15 @@ def menu(request):
     user = request.user.id
     print(user)
     products = Menu.objects.all()
+    print(products)
 
     cart_items = Cart_items.objects.filter(user = user)
     
     print(len(cart_items))
     if len(cart_items) > 0:
         for itm in cart_items:
-            filter_products = Menu.objects.filter(item_name__contains=itm)
+            print(itm.item)
+            filter_products = Menu.objects.filter(item_name=itm.item)
             print(filter_products.count())
             if filter_products:
                 print('yes exists')
@@ -40,6 +42,6 @@ def menu(request):
 
             
 
-    context = {'menu_items': products, 'cart_items': len(cart_items)}
+    context = {'title': 'Menu', 'menu_items': products, 'cart_items': len(cart_items)}
     return render(request,'menu.html', context)
 
