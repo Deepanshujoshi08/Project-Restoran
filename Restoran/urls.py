@@ -47,10 +47,11 @@ urlpatterns = [
     path('forget-password/', forget_pass,  name='forget_pass'),
     path('change-password/', change_password,  name='change_password'),
 
-    path('add-to-cart/', add_to_cart, name='add_to_cart'),
-    path('menu/remove/<id>', remove_item, name='remove_item'),
 
-    path('cart/', cart, name='cart')
+    path('cart/', cart, name='cart'),
+    path('add-to-cart/', add_to_cart, name='add_to_cart'),
+    path('cart/remove/<id>', remove_cart_item, name='remove_cart_item'),
+    path('cart/take-away/', remove_cart_item, name='remove_cart_item'),
 ]
 
 

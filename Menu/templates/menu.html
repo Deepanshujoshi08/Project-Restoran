@@ -80,7 +80,7 @@
                                                 {% endif %}
                                                 <h6><button class="btn btn-danger mx-2" data-itemid="{{item.id}}">Add</button></h6>
                                                 {% if item.quantity %}
-                                                <h6><a href="remove/{{item.id}}" class="btn btn-danger" data-itemid="{{item.id}}">Remove</a></h6>
+                                                <h6><a href="/cart/remove/{{item.id}}?title={{title}}" class="btn btn-danger" data-itemid="{{item.id}}">Remove</a></h6>
                                                 {% endif %}
                                             </div>
                                                 

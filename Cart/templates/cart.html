@@ -11,20 +11,74 @@
 
 
 <!-- Menu Start -->
-<div class="container-xxl py-5">
-    <div class="container">
 
-        <!-- menu heading
-        <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
-            <h5 class="section-title ff-secondary text-center text-danger fw-normal">Food Menu</h5>
-            <h1 class="mb-5">Most Popular Items</h1>
-        </div> -->
+<!-- cart heading -->
+<div class="container-xxl py-5">
+    <div class="row w-75 m-auto g-3">
+        <div class="col-5 bg-danger h5 text-start text-white p-2">Product</div>
+        <div class="col-3 bg-danger h5 text-start text-white p-2 text-center">Quantity</div>
+        <div class="col-1 bg-danger h5 text-start text-white p-2">Price</div>
+        <div class="col-3 bg-danger h5 text-end p-2 text-white">Subtotal</div>
+
+        <!-- foor loop -->
 
         
+        <!-- product list -->
+
+        
+        {% for item in cart %}
+        
+         
+        <div class="col-5 ">
+            <div class="h5">{{item.item}}</div>
+            <a href="/cart/remove/{{item.item_id}}?title={{title}}">Remove</a>
+        </div>
+        <div class="col-3 text-start text-center">{{item.quantity}}</div>
+        <div class="col-1 text-start">₹ {{item.item.item_price}}</div>
+        <div class="col-3 text-end subT" id="subT"> {% widthratio item.quantity 1 item.item.item_price %} </div>
+        
+        
+        
+        
+        {% endfor %}
+
+        
+
+        <div class="col-7"></div>
+        <hr class="col-5 border border-danger border-2  opacity-100">
+        
+        <div class="col-7"></div>
+        <div class="col 2 text-start h4">Total</div>
+        <div class="col 2 text-end h5" id="Tprice"></div>
+        
+        
+        <div class="col-12 bg-danger p-2 py-4 text-end">
+            <a href="take-away/" class="btn btn-light text-danger">Take Away</a>
+            <a class="btn btn-light text-danger">Dinning</a>
+            <a class="btn btn-light text-danger">Delivery</a>
+        </div>
+        <!-- end loop -->
+
     </div>
+
+
+
+
+
 </div>
 <!-- Menu End -->
 
+<script>
+    
+    subT = document.getElementsByClassName('subT')
+    b=0
+    for (var i = 0; i < subT.length; i++){
+        a=parseInt(subT[i].innerText) 
+        b=b+a
+    }
+    document.getElementById('Tprice').innerText = b;    
+    
+</script>
 
 
 
