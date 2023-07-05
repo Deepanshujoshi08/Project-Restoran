@@ -61,7 +61,10 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'debug_toolbar.middleware.DebugToolbarMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django_session_timeout.middleware.SessionTimeoutMiddleware',
 ]
+
 
 ROOT_URLCONF = 'Restoran.urls'
 
@@ -171,3 +174,13 @@ CHANNEL_LAYERS = {
             },
         },
     }
+
+
+# Session expriy
+SESSION_EXPIRE_SECONDS = 3600 # 1 hour
+
+SESSION_EXPIRE_AFTER_LAST_ACTIVITY = True
+
+SESSION_EXPIRE_AFTER_LAST_ACTIVITY_GRACE_PERIOD = 60 # group by minute
+
+SESSION_TIMEOUT_REDIRECT = '/'
