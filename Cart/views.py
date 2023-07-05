@@ -38,13 +38,13 @@ def add_to_cart(request):
         return redirect('/login/')
 
 
-def remove_item(req, id):
+def remove_cart_item(req, id):
     user = req.user
     menu = Menu.objects.get(id = id)
     cart = Cart_items.objects.get(
         Q(user = user)&
         Q(item_id = id)
-    )
+    )   
 
     menu.quantity = 0
     menu.in_cart = False
@@ -54,8 +54,16 @@ def remove_item(req, id):
     req.session['cart'] = len(uptaded_cart)
         
     print('length of cart' + str(req.session['cart']))
-    return redirect('/menu/')
+    if req.GET.get('title')== 'Cart':
+        return redirect('/cart/')
+    else:
+        return redirect('/menu/')
+    
 
 
 def cart(req):
-    return render(req, 'cart.html', {'title': 'Cart'})
+
+    cart_items = Cart_items.objects.filter(user = req.user.id)
+    
+    
+    return render(req, 'cart.html', {'title': 'Cart', 'cart':cart_items })
