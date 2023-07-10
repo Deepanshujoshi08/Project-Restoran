@@ -2,7 +2,62 @@ from django.shortcuts import render,redirect
 from Menu.models import *
 from Cart.models import *
 from django.db.models import Q
+from django.http import HttpResponse,JsonResponse
+import json
 # Create your views here.
+
+
+class Object:
+    def toJSON(self):
+        return json.dumps(self, default=lambda o: o.__dict__, 
+            sort_keys=True, indent=4)
+
+
+def update_cart(request):
+    item_id = request.POST.get('item')
+    action = request.POST.get('act')
+
+    print('item_id:', item_id, 'action:', action)
+
+    user = request.user
+    item = Menu.objects.get(id = item_id)
+
+    order, created = Order.objects.get_or_create(user = user, complete = False)
+
+    cartItem, created = Cart_items.objects.get_or_create(order = order, item = item)
+
+    if action == 'add':
+        update_qnt = cartItem.quantity + 1
+        cartItem.quantity = update_qnt
+        cartItem.save()
+    elif action == 'subtract':
+        update_qnt = cartItem.quantity - 1
+        cartItem.quantity = update_qnt
+        cartItem.save()
+    elif action == 'remove':
+        cartItem.delete()
+
+
+    if cartItem.quantity <= 0:
+        cartItem.delete()
+
+    print('order:', cartItem.item, 'here it is')
+    # data = [
+    #     {'item': order.item, 'quantity': order.quantity}
+    # ]
+
+    total_items = order.get_cart_items
+    request.session['cart'] = total_items
+
+    print('total_items:', total_items)
+    
+
+    data = Object()
+    data.item = cartItem.item.item_name
+    data.quantity = cartItem.quantity
+    data = data.toJSON()
+
+    return JsonResponse(data, safe=False)
 
 
 
@@ -10,8 +65,10 @@ def add_to_cart(request):
     user = request.user
 
     if user:
-        id = request.POST.get('id') 
-        qnt = request.POST.get('quantity')
+        id = request.POST.get('item_id', None)
+        print('the product id :', id, ' of', user.username)
+        qnt = request.POST.get('quantity', None)
+        print('the product quantity :', qnt , ' of', user.username)
         menu = Menu.objects.get(id = id)
 
         cart = Cart_items.objects.filter(
@@ -31,8 +88,15 @@ def add_to_cart(request):
             request.session['cart'] = len(uptaded_cart)
         
             print('length of cart' + str(request.session['cart']))
-            
-        return redirect('/menu/')
+        
+        cart = Cart_items.objects.get(
+            Q(user = user)&
+            Q(item = menu)
+        )
+        data = {
+            'quantity': cart.quantity
+        }
+        return HttpResponse(data)
     
     else:
         return redirect('/login/')
@@ -40,20 +104,14 @@ def add_to_cart(request):
 
 def remove_cart_item(req, id):
     user = req.user
-    menu = Menu.objects.get(id = id)
-    cart = Cart_items.objects.get(
-        Q(user = user)&
-        Q(item_id = id)
-    )   
+    
+    item = Menu.objects.get(id = id)
+    order = Order.objects.get(user = user, complete = False)
+    cart_item = Cart_items.objects.get(order = order, item = item)
 
-    menu.quantity = 0
-    menu.in_cart = False
-    menu.save()
-    cart.delete()
-    uptaded_cart = Cart_items.objects.filter(user = req.user.id)
-    req.session['cart'] = len(uptaded_cart)
+    
+    cart_item.delete()
         
-    print('length of cart' + str(req.session['cart']))
     if req.GET.get('title')== 'Cart':
         return redirect('/cart/')
     else:
@@ -62,8 +120,39 @@ def remove_cart_item(req, id):
 
 
 def cart(req):
+    if req.user.is_authenticated:
+        user = req.user
+        order, created = Order.objects.get_or_create(user=user, complete= False)
+        items = order.cart_items_set.all()
+    else:
+        items = []
+        order = {'get_cart_total': 0, 'get_cart_items': 0}
 
-    cart_items = Cart_items.objects.filter(user = req.user.id)
+    context = {
+        'title': 'Cart',
+        'items': items,
+        'order': order
+    }
+
     
     
-    return render(req, 'cart.html', {'title': 'Cart', 'cart':cart_items })
+    return render(req, 'cart.html', context)
+
+
+def checkout(req):
+    if req.user.is_authenticated:
+        user = req.user
+        order, created = Order.objects.get_or_create(user=user, complete= False)
+        items = order.cart_items_set.all()
+    else:
+        items = []
+        order = {'get_cart_total': 0, 'get_cart_items': 0}
+
+    context = {
+        'title': 'Checkout',
+        'items': items,
+        'order': order
+    }
+    return render(req, 'checkout.html', context)
+
+

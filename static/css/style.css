@@ -548,3 +548,8 @@ a{
     font-size: 14px;
     color: white;
 }
+
+
+.hand-cursor{
+    cursor: pointer;
+}

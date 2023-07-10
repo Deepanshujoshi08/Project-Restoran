@@ -70,10 +70,8 @@ def login_page(req):
             return redirect('/login/')       
         else:
             login(req, user)
-            uptaded_cart = Cart_items.objects.filter(user = req.user.id)
-            req.session['cart'] = len(uptaded_cart)
-        
-            print('length of cart' + str(req.session['cart']))
+            uptaded_cart = Order.objects.get(user = req.user, complete = False)
+            req.session['cart'] = uptaded_cart.get_cart_items        
             return redirect('/menu/')
     
     if req.user.is_authenticated:
@@ -81,13 +79,13 @@ def login_page(req):
 
         return redirect('/')
     
-    if req.user:
-        uptaded_cart = Cart_items.objects.filter(user = req.user.id)
-        req.session['cart'] = len(uptaded_cart)
+    # if req.user:
+    #     uptaded_cart = Order.objects.filter(user = req.user.id)
+    #     req.session['cart'] = uptaded_cart.get_cart_items()
         
-        print('length of cart' + str(req.session['cart']))
-    else:
-        req.session['cart'] = 0
+    #     print('length of cart' + str(req.session['cart']))
+    # else:
+    #     req.session['cart'] = 0
 
     return render(req, 'login.html', {'title': 'Login'})
 

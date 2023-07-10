@@ -3,8 +3,13 @@ from .models import *
 # Register your models here.
 
 
+
+
 class Cart_itemsAdmin(admin.ModelAdmin):
-    list_display = ['item', 'quantity', 'user']
+    list_display = ['item', 'quantity', 'order']
 
 
-admin.site.register(Cart_items, Cart_itemsAdmin)
+admin.site.register(Cart_items, Cart_itemsAdmin,)
+
+admin.site.register(Order)
+admin.site.register(ShippingAddress)

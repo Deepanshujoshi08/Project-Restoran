@@ -13,53 +13,66 @@
 <!-- Menu Start -->
 
 <!-- cart heading -->
-<div class="container-xxl py-5">
-    <div class="row w-75 m-auto g-3">
+<div class="container">
+    <a href="/menu/" class="btn btn-light text-danger border-danger">← Continue ordering</a>
+    <div class="row m-auto g-3">
         <div class="col-5 bg-danger h5 text-start text-white p-2">Product</div>
-        <div class="col-3 bg-danger h5 text-start text-white p-2 text-center">Quantity</div>
-        <div class="col-1 bg-danger h5 text-start text-white p-2">Price</div>
+        <div class="col-2 bg-danger h5 text-start text-white p-2">Price</div>
+        <div class="col-2 bg-danger h5 text-start text-white p-2 text-center">Quantity</div>
         <div class="col-3 bg-danger h5 text-end p-2 text-white">Subtotal</div>
 
-        <!-- foor loop -->
+    </div>
+    <!-- foor loop -->
 
-        
-        <!-- product list -->
 
-        
-        {% for item in cart %}
-        
-         
-        <div class="col-5 ">
-            <div class="h5">{{item.item}}</div>
-            <a href="/cart/remove/{{item.item_id}}?title={{title}}">Remove</a>
+    <!-- product list -->
+
+
+
+    <div class="row">
+
+        {% for item in items %}
+        <div class="col-5 mb-2">
+            <div class="d-flex">
+                <img class="flex-shrink-0 img-fluid rounded" src=" /static/{{item.item.item_image}}"
+                    alt="menu_item_image" style="width: 80px; max-height: 50px;">
+                <div class="mx-2">
+                    <span class="h5">{{item.item}}</span><br>
+                    <span data-item="{{item.item_id}}" data-action="remove"
+                        class="text-danger fs-6 update-cart hand-cursor">Remove</span>
+                </div>
+            </div>
         </div>
-        <div class="col-3 text-start text-center">{{item.quantity}}</div>
-        <div class="col-1 text-start">₹ {{item.item.item_price}}</div>
-        <div class="col-3 text-end subT" id="subT"> {% widthratio item.quantity 1 item.item.item_price %} </div>
-        
-        
-        
-        
+        <div class="col-2 text-start">₹ {{item.item.item_price}}</div>
+        <div class="col-2 d-flex justify-content-center">
+            <div class="p-1">{{item.quantity}}</div>
+            <div class="d-flex flex-column p-1">
+                <img data-item="{{item.item_id}}" data-action="add" class="mb-1 hand-cursor update-cart" src="{% static 'img/up.png' %}" alt="" width="10">
+                <img data-item="{{item.item_id}}" data-action="subtract" class="hand-cursor update-cart" src="{% static 'img/down.png' %}" alt="" width="10">
+            </div>
+        </div>
+        <div class="col-3 text-end subT" id="subT">₹ {{item.get_total}} </div>
         {% endfor %}
 
-        
+    </div>
 
+
+    <div class="row">
         <div class="col-7"></div>
         <hr class="col-5 border border-danger border-2  opacity-100">
-        
-        <div class="col-7"></div>
-        <div class="col 2 text-start h4">Total</div>
-        <div class="col 2 text-end h5" id="Tprice"></div>
-        
-        
-        <div class="col-12 bg-danger p-2 py-4 text-end">
-            <a href="take-away/" class="btn btn-light text-danger">Take Away</a>
-            <a class="btn btn-light text-danger">Dinning</a>
-            <a class="btn btn-light text-danger">Delivery</a>
-        </div>
-        <!-- end loop -->
-
     </div>
+
+    <div class="row">
+        <div class="col-7">Total items {{order.get_cart_items}}</div>
+        <div class="col 2 text-start h4">Total</div>
+        <div class="col 2 text-end h5">₹ {{order.get_cart_total}}</div>
+    </div>
+
+    <div class="bg-danger p-2 py-4 text-end">
+        <a href="/checkout/" class="btn btn-light text-danger">Checkout</a>
+    </div>
+    <!-- end loop -->
+
 
 
 
@@ -68,17 +81,6 @@
 </div>
 <!-- Menu End -->
 
-<script>
-    
-    subT = document.getElementsByClassName('subT')
-    b=0
-    for (var i = 0; i < subT.length; i++){
-        a=parseInt(subT[i].innerText) 
-        b=b+a
-    }
-    document.getElementById('Tprice').innerText = b;    
-    
-</script>
 
 
 

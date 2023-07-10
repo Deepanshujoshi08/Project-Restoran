@@ -22,6 +22,7 @@ from Cart.views import *
 from Accounts.views import *
 
 urlpatterns = [
+
     path('admin/', admin.site.urls),
 
     path('', home, name='home'),
@@ -50,8 +51,9 @@ urlpatterns = [
 
     path('cart/', cart, name='cart'),
     path('add-to-cart/', add_to_cart, name='add_to_cart'),
+    path('update-cart/', update_cart, name='update_cart'),
     path('cart/remove/<id>', remove_cart_item, name='remove_cart_item'),
-    path('cart/take-away/', remove_cart_item, name='remove_cart_item'),
+    path('checkout/', checkout , name='checkout'),
 ]
 
 

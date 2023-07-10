@@ -33,7 +33,6 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    'channels',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -84,8 +83,9 @@ TEMPLATES = [
     },
 ]
 
-# WSGI_APPLICATION = 'Restoran.wsgi.application'
-ASGI_APPLICATION = 'Restoran.asgi.application'
+
+WSGI_APPLICATION = 'Restoran.wsgi.application'
+
 
 
 # Database
@@ -159,21 +159,9 @@ EMAIL_PORT = 587
 EMAIL_HOST_USER = 'princesandhu1011@gmail.com'
 EMAIL_HOST_PASSWORD = 'ylqgjkidlykmtdde'
 
-INTERNAL_IPS = [
-    '127.0.0.1',
-]
-
-
-# Channels redis
-
-CHANNEL_LAYERS = {
-        "default": {
-            "BACKEND": "channels_redis.core.RedisChannelLayer",
-            "CONFIG": {
-                "hosts": [("localhost", 6379)],
-            },
-        },
-    }
+# INTERNAL_IPS = [
+#     '127.0.0.1',
+# ]
 
 
 # Session expriy

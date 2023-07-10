@@ -4,18 +4,19 @@
 
 {%load static%}
 
+
 <!-- Menu Start -->
 <div class="container-xxl py-5">
     <div class="container">
 
         <!-- menu heading -->
-        <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
+        <div class="text-center" data-wow-delay="0.1s">
             <h5 class="section-title ff-secondary text-center text-danger fw-normal">Food Menu</h5>
             <h1 class="mb-5">Most Popular Items</h1>
         </div>
 
         <!-- menu filter -->
-        <div class="tab-class text-center wow fadeInUp" data-wow-delay="0.1s">
+        <div class="tab-class text-center" data-wow-delay="0.1s">
             <ul class="nav nav-pills d-inline-flex justify-content-center border-bottom mb-5">
                 <li class="nav-item">
                     <a class="d-flex align-items-center text-start mx-3 ms-0 pb-3 active" data-bs-toggle="pill"
@@ -53,7 +54,7 @@
             <div class="tab-content">
 
                 <!-- filter 1 -->
-                <div id="tab-1" class="tab-pane fade show p-0 active">
+                <div id="tab-1" class="tab-pane active">
                     <div class="row g-4">
                         {% for item in menu_items %}
 
@@ -68,23 +69,15 @@
                                     </h5>
                                     <div class="d-flex">
                                         <small class="fst-italic">{{item.item_description}}</small>
-
-                                        <form method="post" action="/add-to-cart/">
-                                            {% csrf_token %}
-                                            <input type="text" class="d-none" name="id" value="{{item.id}}">
+                                            <!-- <input type="text" class="d-none" name="item_id" id="item_id" value="{{item.id}}"> -->
                                             <div class="d-flex">
-                                                {% if item.quantity %}
-                                                    <input type="number" class="quantity" name="quantity" value="{{item.quantity}}">
-                                                {% else %}
-                                                    <input type="number" class="quantity" name="quantity" value="1">
-                                                {% endif %}
-                                                <h6><button class="btn btn-danger mx-2" data-itemid="{{item.id}}">Add</button></h6>
+                                                <h6><button data-item="{{item.id}}" data-action="add" class="btn btn-danger mx-2 update-cart">Add</button></h6>
                                                 {% if item.quantity %}
                                                 <h6><a href="/cart/remove/{{item.id}}?title={{title}}" class="btn btn-danger" data-itemid="{{item.id}}">Remove</a></h6>
                                                 {% endif %}
                                             </div>
-                                                
-                                        </form>
+
+                                       
 
                                     </div>
                                 </div>
@@ -237,6 +230,11 @@
 
 
 
+<script type="text/javascript">
+
+
+</script>
 
 
 {% endblock %}
+
