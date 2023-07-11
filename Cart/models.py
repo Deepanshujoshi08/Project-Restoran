@@ -11,6 +11,7 @@ class Order(models.Model):
     date_ordered = models.DateTimeField(auto_now_add=True)
     complete = models.BooleanField(default=False, null=True, blank=True)
     transaction_id = models.CharField(max_length=200, null=True)
+    order_option = models.CharField(max_length=200, null=True)
 
     def __str__(self) -> str:
         return self.user.username
@@ -42,7 +43,7 @@ class Cart_items(models.Model):
         
     
 
-class ShippingAddress(models.Model):
+class Delivery_address(models.Model):
     user = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True)
     order = models.ForeignKey(Order, on_delete=models.SET_NULL, blank=True, null=True)
     address = models.CharField(max_length=200, null=True)

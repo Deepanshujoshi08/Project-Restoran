@@ -68,8 +68,26 @@
         <div class="col 2 text-end h5">₹ {{order.get_cart_total}}</div>
     </div>
 
-    <div class="bg-danger p-2 py-4 text-end">
-        <a href="/checkout/" class="btn btn-light text-danger">Checkout</a>
+    <div class="row bg-danger p-2 py-4 ">
+        <div class="col text-light">
+            <span onclick="checkout_option('dinning')">
+                <input type="radio" name="checkout" id="dinning">
+                <label for="dinning" class="mx-2">Dinning</label>
+            </span>
+            <span onclick="checkout_option('take-away')">
+                <input type="radio" name="checkout" id="take-away" onclick="checkout_option('take-away')">
+                <label for="take-away" class="mx-2">Take Away</label>
+            </span>
+            <span onclick="checkout_option('delivery')">
+                <input type="radio" name="checkout" id="delivery" onclick="checkout_option('delivery')">
+                <label for="delivery" class="mx-2">Delivery</label>
+            </span>
+        </div>
+        <div class="col text-end">
+            <!-- <a href="/checkout/" class="btn btn-light text-danger">Dinning</a>
+            <a href="/checkout/" class="btn btn-light text-danger">Take Away</a> -->
+            <a href="/checkout?option=delivery" class="btn btn-light text-danger checkout-btn">Checkout</a>
+        </div>
     </div>
     <!-- end loop -->
 
@@ -81,7 +99,13 @@
 </div>
 <!-- Menu End -->
 
+<script>
+    function checkout_option(option){
+        $('.checkout-btn').attr('href', '/checkout?option='+ option);
+    }
 
+    
+</script>
 
 
 

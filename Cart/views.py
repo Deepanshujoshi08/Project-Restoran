@@ -4,6 +4,7 @@ from Cart.models import *
 from django.db.models import Q
 from django.http import HttpResponse,JsonResponse
 import json
+import datetime
 # Create your views here.
 
 
@@ -102,8 +103,8 @@ def add_to_cart(request):
         return redirect('/login/')
 
 
-def remove_cart_item(req, id):
-    user = req.user
+def remove_cart_item(request, id):
+    user = request.user
     
     item = Menu.objects.get(id = id)
     order = Order.objects.get(user = user, complete = False)
@@ -112,16 +113,16 @@ def remove_cart_item(req, id):
     
     cart_item.delete()
         
-    if req.GET.get('title')== 'Cart':
+    if request.GET.get('title')== 'Cart':
         return redirect('/cart/')
     else:
         return redirect('/menu/')
     
 
 
-def cart(req):
-    if req.user.is_authenticated:
-        user = req.user
+def cart(request):
+    if request.user.is_authenticated:
+        user = request.user
         order, created = Order.objects.get_or_create(user=user, complete= False)
         items = order.cart_items_set.all()
     else:
@@ -136,13 +137,16 @@ def cart(req):
 
     
     
-    return render(req, 'cart.html', context)
+    return render(request, 'cart.html', context)
 
 
-def checkout(req):
-    if req.user.is_authenticated:
-        user = req.user
+def checkout(request):
+    option = request.GET.get('option')
+    if request.user.is_authenticated:
+        user = request.user
         order, created = Order.objects.get_or_create(user=user, complete= False)
+        order.order_option = option
+        order.save()
         items = order.cart_items_set.all()
     else:
         items = []
@@ -151,8 +155,36 @@ def checkout(req):
     context = {
         'title': 'Checkout',
         'items': items,
-        'order': order
+        'order': order,
+        'option': option
     }
-    return render(req, 'checkout.html', context)
+    return render(request, 'checkout.html', context)
 
 
+def process_order(request):
+
+    transaction_id = datetime.datetime.now().timestamp()
+
+    data = json.loads(request.body)
+
+    if request.user.is_authenticated:
+        user = request.user
+        order, created = Order.objects.get_or_create(user=user, complete=False)
+        total = float(data['form']['total'])
+        order.transaction_id = transaction_id
+
+        if total == order.get_cart_total:
+            order.complete = True
+        order.save()
+
+        if order.order_option == 'delivery':
+            Delivery_address.objects.create(
+                user=user,
+                order=order,
+                address = data['delivery']['address'],
+                city = data['delivery']['city'],
+                state = data['delivery']['state'],
+                pincode = data['delivery']['pincode'],
+            ) 
+
+    return JsonResponse('payment received', safe=False)

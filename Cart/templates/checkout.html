@@ -13,12 +13,12 @@
 <!-- Checkout Start -->
 
 
-<div class="container py-5 wow fadeInUp" data-wow-delay="0.1s">
+<div class="container py-5" data-wow-delay="0.1s">
     <div class="row">
 
         <div class="col-md-6">
-            <form class="shadow-sm p-3 mb-5 bg-body-tertiary">
-                <div class="row g-3">
+            <form class="shadow-sm p-3 mb-5 bg-body-tertiary form-wrapper" id="form">
+                <div class="row g-3" id="user-info">
                     <div class="col-md-6">
                         <div class="form-floating">
                             <input type="text" class="form-control" id="name" placeholder="Your Name">
@@ -27,11 +27,15 @@
                     </div>
                     <div class="col-md-6">
                         <div class="form-floating">
-                            <input type="email" class="form-control" id="name" placeholder="Your Email">
+                            <input type="email" class="form-control" id="email" placeholder="Your Email">
                             <label for="name">Your Email</label>
                         </div>
                     </div>
                     <hr>
+
+                </div>
+                <div class="row g-3">
+                    {% if option == 'delivery' %}
                     <span class="mt-0 fs-5">Delivery Information</span>
                     <!-- <hr> -->
                     <div class="col-md-6">
@@ -58,12 +62,21 @@
                             <label for="name">Pincode</label>
                         </div>
                     </div>
-                    
+                    {% elif option == 'take-away'%}
+
+                    {% endif %}
+
                     <div class="col-12">
-                        <button class="btn btn-danger w-100 py-3" type="submit">Continue</button>
+                        <button class="btn btn-danger w-100 py-3" id="form-button" type="submit">Continue</button>
                     </div>
                 </div>
             </form>
+            <div class="shadow-sm p-3 mb-5 bg-body-tertiary" id="payment-info">
+                <h4>Payment options</h4>
+                <hr>
+                <span class="fs-5">Paypal</span>
+                <div class="btn btn-danger" id="make-payment">Make payment</div>
+            </div>
 
         </div>
         <div class="col-md-6">
@@ -71,18 +84,19 @@
             <div class="shadow-sm p-3 mb-5 bg-body-tertiary">
 
                 <a href="/cart/" class="btn btn-light text-danger border-danger">← Back to cart</a>
-                
+
                 <div class=" bg-danger h5 text-start text-white mt-2 p-2">Order Summary</div>
-                
+
                 {% for item in items %}
                 <div class="row mb-2">
                     <div class="col-5 ">
                         <div class="d-flex">
                             <img class="flex-shrink-0 img-fluid rounded" src=" /static/{{item.item.item_image}}"
-                            alt="menu_item_image" style="width: 70px; max-height: 45px;">
+                                alt="menu_item_image" style="width: 70px; max-height: 45px;">
                             <div class="mx-2">
                                 <div class="fs-6">{{item.item}}</div>
-                                <a href="/cart/remove/{{item.item_id}}?title={{title}}">Remove</a>
+                                <span data-item="{{item.item_id}}" data-action="remove"
+                                    class="text-danger fs-6 update-cart hand-cursor">Remove</span>
                             </div>
                         </div>
                     </div>
@@ -101,12 +115,91 @@
 
         </div>
 
+
+
     </div>
 
 
 </div>
 
+<script>
 
+    $('#payment-info').hide();
+
+
+    var total = '{{order.get_cart_total}}';
+
+    var form = $('#form');
+
+    var option = '{{option}}';
+
+    if (user != 'AnonymousUser') {
+        $('#user-info').hide();
+    }
+
+    if (option == 'take-away' && user != 'AnonymousUser') {
+        $('.form-wrapper').hide();
+        $('#payment-info').show();
+    }
+
+    form.submit(function (e) {
+        e.preventDefault();
+        console.log('form submitted...');
+        $('#form-button').hide();
+        $('#payment-info').show();
+
+    })
+
+    $('#make-payment').click(function () {
+        console.log('payment button clicked')
+
+        var userFormData = {
+            'name': null,
+            'email': null,
+            'total': total,
+        }
+
+        var deliveryInfo = {
+            'address': null,
+            'city': null,
+            'state': null,
+            'pincode': null,
+        }
+
+        if (option == 'delivery') {
+            deliveryInfo.address = $('#address').val();;
+            deliveryInfo.city = $('#city').val();
+            deliveryInfo.state = $('#state').val();;
+            deliveryInfo.pincode = $('#pincode').val();
+        }
+
+        if (user == 'AnonymousUser') {
+            userFormData.name = $('#name').val();;
+            userFormData.email = $('#email').val();
+        }
+
+        $.ajax({
+            type: 'POST',
+            url: '/process-order/',
+            headers: {
+                'X-CSRFToken': csrftoken,
+            },
+            data: JSON.stringify({
+                'form': userFormData,
+                'delivery': deliveryInfo
+            }),
+            success: function (data) {
+                // data = JSON.parse(data)
+                console.log('success: ' + data);
+                alert('Transaction completed successfully')
+                window.location.href = "{% url 'home' %}"
+            }
+
+        })
+
+    })
+
+</script>
 
 
 

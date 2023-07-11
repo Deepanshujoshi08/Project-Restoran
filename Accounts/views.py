@@ -12,18 +12,18 @@ from Cart.models import *
 
 
 
-def register(req):
-    if req.method == 'POST':
-        first_name = req.POST.get('first_name')
-        last_name = req.POST.get('last_name')
-        username = req.POST.get('username')
-        email = req.POST.get('email')
-        password = req.POST.get('password')
+def register(request):
+    if request.method == 'POST':
+        first_name = request.POST.get('first_name')
+        last_name = request.POST.get('last_name')
+        username = request.POST.get('username')
+        email = request.POST.get('email')
+        password = request.POST.get('password')
 
         user = User.objects.filter(username = username)
         
         if user.exists():
-            messages.info(req, 'Username already taken')
+            messages.info(request, 'Username already taken')
             return redirect('/register/')
         
         send_email_to_user(username,email)        
@@ -31,33 +31,33 @@ def register(req):
         user.set_password(password)
         user.save()
         
-        req.session['purpose'] = 'register'
-        messages.info(req, 'Otp sent to you email successfully. Please check your email address')
+        request.session['purpose'] = 'register'
+        messages.info(request, 'Otp sent to you email successfully. Please check your email address')
         return redirect("/otp?username="+username)
 
-    return render(req, 'register.html', {'title': 'Register'})
+    return render(request, 'register.html', {'title': 'Register'})
 
     # return render(request,'register.html')
 
 
 
-def login_page(req):
+def login_page(request):
 
     
-    if req.method == 'POST':
-        username = req.POST.get('username')
-        password = req.POST.get('password')
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
 
         #User availability check 
         if not User.objects.filter(username = username).exists():
-            messages.info(req, 'Invalid username')
+            messages.info(request, 'Invalid username')
             return redirect('/login/')
         
 
         # is user active
         queryset = User.objects.get(username = username)
         if queryset.is_active != True:
-            messages.error(req, 'Your account is not verified, please enter the otp to verify your account')
+            messages.error(request, 'Your account is not verified, please enter the otp to verify your account')
             send_email_to_user(username, queryset.email)
 
 
@@ -66,34 +66,37 @@ def login_page(req):
         # password check
         user = authenticate(username = username, password = password)
         if user is None:
-            messages.error(req, 'Invalid password')
+            messages.error(request, 'Invalid password')
             return redirect('/login/')       
         else:
-            login(req, user)
-            uptaded_cart = Order.objects.get(user = req.user, complete = False)
-            req.session['cart'] = uptaded_cart.get_cart_items        
+            login(request, user)
+            
+            updated_cart = Order.objects.filter(user = request.user, complete = False)
+            if updated_cart:
+                updated_cart = Order.objects.get(user = request.user, complete = False)
+                request.session['cart'] = updated_cart.get_cart_items        
             return redirect('/menu/')
     
-    if req.user.is_authenticated:
+    if request.user.is_authenticated:
         print("You must be logged in")
 
         return redirect('/')
     
-    # if req.user:
-    #     uptaded_cart = Order.objects.filter(user = req.user.id)
-    #     req.session['cart'] = uptaded_cart.get_cart_items()
+    # if request.user:
+    #     uptaded_cart = Order.objects.filter(user = request.user.id)
+    #     request.session['cart'] = uptaded_cart.get_cart_items()
         
-    #     print('length of cart' + str(req.session['cart']))
+    #     print('length of cart' + str(request.session['cart']))
     # else:
-    #     req.session['cart'] = 0
+    #     request.session['cart'] = 0
 
-    return render(req, 'login.html', {'title': 'Login'})
+    return render(request, 'login.html', {'title': 'Login'})
 
 
 
-def forget_pass(req):
-    if req.method == 'POST':
-        user = req.POST.get('user')
+def forget_pass(request):
+    if request.method == 'POST':
+        user = request.POST.get('user')
 
         queryset = User.objects.filter(
             Q(username = user)|
@@ -103,7 +106,7 @@ def forget_pass(req):
         print(queryset)
 
         if not queryset.exists():
-            messages.error(req, 'User does not exist')
+            messages.error(request, 'User does not exist')
             return redirect('/forget-password')
 
         user_obj = User.objects.get(
@@ -111,72 +114,72 @@ def forget_pass(req):
             Q(email = user)
         )
         send_email_to_user(user_obj.username, user_obj.email)
-        req.session['purpose'] = 'forget'
-        messages.success(req, 'otp sent successfully to email ')
+        request.session['purpose'] = 'forget'
+        messages.success(request, 'otp sent successfully to email ')
         return redirect("/otp?username="+ user)
     
-    return render(req, 'forget_pass.html')
+    return render(request, 'forget_pass.html')
 
 
 
-def otp_verify(req): 
+def otp_verify(request): 
 
-    if req.method == 'POST':
-        user = req.POST.get('user')
-        input_otp = req.POST.get('otp')
+    if request.method == 'POST':
+        user = request.POST.get('user')
+        input_otp = request.POST.get('otp')
         queryset = otp.objects.get(user = user)
         
         original_otp = queryset.otp_no
         print(original_otp)
         if input_otp != original_otp:
-            messages.error(req, 'Otp incorrect')
+            messages.error(request, 'Otp incorrect')
             return redirect('/otp?username='+user)
         
         queryset2 = User.objects.get(username = user)
         queryset2.is_active = True
         queryset2.save()
         queryset.delete()
-        if req.session.get('purpose') == 'register':
-            messages.success(req, 'Resgistration successful')
+        if request.session.get('purpose') == 'register':
+            messages.success(request, 'Resgistration successful')
             return redirect('/login/')
         
-        if req.session.get('purpose') == 'forget':
-            req.session['user'] = user
-            messages.info(req, 'Creat new password')
+        if request.session.get('purpose') == 'forget':
+            request.session['user'] = user
+            messages.info(request, 'Creat new password')
             return redirect('/change-password/')
         
 
-    username = req.GET.get('username')
-    return render(req, 'otp.html',{'username':username})
+    username = request.GET.get('username')
+    return render(request, 'otp.html',{'username':username})
 
 
-def change_password(req):
-    if req.method == 'POST':
-        user = req.session.get('user')
+def change_password(request):
+    if request.method == 'POST':
+        user = request.session.get('user')
         user_obj = User.objects.get(username = user)
     
-        password = req.POST.get('password')
-        cnf_password = req.POST.get('cnf_password')
+        password = request.POST.get('password')
+        cnf_password = request.POST.get('cnf_password')
 
         if password != cnf_password:
-            messages.error(req, 'Password not matching')
-            req.session['user'] = user
+            messages.error(request, 'Password not matching')
+            request.session['user'] = user
             return redirect('otp/change-password')
         
         user_obj.set_password(password)
         user_obj.save()
-        messages.success(req, 'Password changed successfully')
+        messages.success(request, 'Password changed successfully')
         return redirect('/login/')
     
-    return render(req, 'change_password.html')
+    return render(request, 'change_password.html')
 
 
 
 
     
 
-def logout_page(req):
-    logout(req)
+def logout_page(request):
+    logout(request)
     return redirect('/')
 
 def profile(request):

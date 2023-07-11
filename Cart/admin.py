@@ -12,4 +12,4 @@ class Cart_itemsAdmin(admin.ModelAdmin):
 admin.site.register(Cart_items, Cart_itemsAdmin,)
 
 admin.site.register(Order)
-admin.site.register(ShippingAddress)
+admin.site.register(Delivery_address)
