@@ -186,5 +186,17 @@ def process_order(request):
                 state = data['delivery']['state'],
                 pincode = data['delivery']['pincode'],
             ) 
+        if order.order_option == 'dinning':
+            Dinning_info.objects.create(
+                user=user,
+                order=order,
+                name = data['dinning']['name'],
+                email = data['dinning']['email'],
+                phone = data['dinning']['phone'],
+                people = data['dinning']['people'],
+                date = data['dinning']['date'],
+                time = data['dinning']['time'],
+                special_req = data['dinning']['special_req'],
+            ) 
 
     return JsonResponse('payment received', safe=False)

@@ -18,6 +18,7 @@
 
         <div class="col-md-6">
             <form class="shadow-sm p-3 mb-5 bg-body-tertiary form-wrapper" id="form">
+                {% csrf_token %}
                 <div class="row g-3" id="user-info">
                     <div class="col-md-6">
                         <div class="form-floating">
@@ -62,7 +63,52 @@
                             <label for="name">Pincode</label>
                         </div>
                     </div>
-                    {% elif option == 'take-away'%}
+
+                    {% elif option == 'dinning'%}
+                    <span class="mt-0 fs-5">Dinnning Information</span>
+                    <!-- <hr> -->
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <input type="text" class="form-control" id="d-name" placeholder="Your Name">
+                            <label for="name">Your Name</label>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <input type="number" class="form-control" id="people" placeholder="No Of People">
+                            <label for="name">No Of People</label>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <input type="number" class="form-control" id="phone" placeholder="Phone Number">
+                            <label for="name">Phone Number</label>
+                    `    </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <input type="email" class="form-control" id="d-email" placeholder="Your Email">
+                            <label for="name">Your Email</label>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <input type="date" class="form-control" id="date" placeholder="Date">
+                            <label for="name">Date</label>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <input type="time" class="form-control" id="time" placeholder="Time">
+                            <label for="name">Time</label>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="form-floating">
+                            <textarea class="form-control" placeholder="Special Request" id="special_req" style="height: 100px"></textarea>
+                            <label for="message">Special Request</label>
+                        </div>
+                    </div>
 
                     {% endif %}
 
@@ -131,6 +177,8 @@
 
     var form = $('#form');
 
+    csrftoken = form.$('input[name=csrftoken]').val();
+
     var option = '{{option}}';
 
     if (user != 'AnonymousUser') {
@@ -140,6 +188,10 @@
     if (option == 'take-away' && user != 'AnonymousUser') {
         $('.form-wrapper').hide();
         $('#payment-info').show();
+    }
+
+    if (option == 'dinning') {
+        $('#user-info').hide();
     }
 
     form.submit(function (e) {
@@ -166,11 +218,31 @@
             'pincode': null,
         }
 
+        var dinningInfo = {
+            'name': null,
+            'email': null,
+            'phone': null,
+            'people': null,
+            'date': null,
+            'time': null,
+            'special_req': null,
+        }
+
         if (option == 'delivery') {
-            deliveryInfo.address = $('#address').val();;
+            deliveryInfo.address = $('#address').val();
             deliveryInfo.city = $('#city').val();
-            deliveryInfo.state = $('#state').val();;
+            deliveryInfo.state = $('#state').val();
             deliveryInfo.pincode = $('#pincode').val();
+        }
+
+        if (option == 'dinning') {
+            dinningInfo.name = $('#d-name').val();
+            dinningInfo.email = $('#d-email').val();
+            dinningInfo.phone = $('#phone').val();
+            dinningInfo.people = $('#people').val();
+            dinningInfo.date = $('#date').val();
+            dinningInfo.time = $('#time').val();
+            dinningInfo.special_req = $('#special_req').val();
         }
 
         if (user == 'AnonymousUser') {
@@ -186,7 +258,8 @@
             },
             data: JSON.stringify({
                 'form': userFormData,
-                'delivery': deliveryInfo
+                'delivery': deliveryInfo,
+                'dinning': dinningInfo,
             }),
             success: function (data) {
                 // data = JSON.parse(data)

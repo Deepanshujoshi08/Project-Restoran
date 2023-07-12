@@ -4,6 +4,7 @@ from Menu.models import *
 from django.utils.timezone import now
 
 
+
 # Create your models here.
 
 class Order(models.Model):
@@ -14,7 +15,7 @@ class Order(models.Model):
     order_option = models.CharField(max_length=200, null=True)
 
     def __str__(self) -> str:
-        return self.user.username
+        return str(self.transaction_id)
     
     @property
     def get_cart_total(self) -> str:
@@ -56,3 +57,16 @@ class Delivery_address(models.Model):
         return self.address
 
 
+class Dinning_info(models.Model):
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True)
+    order = models.ForeignKey(Order, on_delete=models.SET_NULL, blank=True, null=True)
+    name = models.CharField(max_length=200)
+    email = models.EmailField(blank=True)
+    phone = models.CharField(max_length=15)
+    people = models.IntegerField(default=1, blank=True, null=True)
+    date = models.DateField()
+    time = models.TimeField()
+    special_req = models.TextField(blank=True, null=True)
+    
+    def __str__(self) -> str:
+        return self.name
