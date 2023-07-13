@@ -17,14 +17,11 @@ class Object:
 def update_cart(request):
     item_id = request.POST.get('item')
     action = request.POST.get('act')
-
     print('item_id:', item_id, 'action:', action)
 
-    user = request.user
     item = Menu.objects.get(id = item_id)
-
+    user = request.user
     order, created = Order.objects.get_or_create(user = user, complete = False)
-
     cartItem, created = Cart_items.objects.get_or_create(order = order, item = item)
 
     if action == 'add':
@@ -59,6 +56,30 @@ def update_cart(request):
     data = data.toJSON()
 
     return JsonResponse(data, safe=False)
+    
+
+
+def AnonymousUser_cart(request):
+    item_id = request.POST.get('item')
+    action = request.POST.get('act')
+
+    print('item_id:', item_id, 'action:', action)
+
+    item = Menu.objects.get(id = item_id)  
+ 
+
+    data = Object()
+    data.item = item
+    data.quantity = 1
+    data = data.toJSON()
+
+    list = []
+
+    list = json.dumps(list)
+
+    response = JsonResponse(list, safe=False)
+    response.set_cookie('cart', list)
+    return response
 
 
 

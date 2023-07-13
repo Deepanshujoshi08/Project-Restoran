@@ -9,10 +9,11 @@ for(var i = 0; i < updateBtns.length; i++) {
 
      console.log('User :', user)
      if(user == 'AnonymousUser'){
-         console.log('Not logged in')
+        AnonymousUserCart(item_id, action)
      }else{
-         updateUserCart(item_id, action)
+        updateUserCart(item_id, action)
      }
+
  })
 }
 
@@ -36,6 +37,31 @@ function updateUserCart(item_id, action){
          data = JSON.parse(data)
          console.log( data.item, 'is added to cart', data.quantity, 'is added')
          location.reload();
+     }
+
+ })
+ 
+}
+function AnonymousUserCart(item_id, action){
+ console.log('AnonymousUser cart update, sending data...')
+
+ $.ajax({
+     type: 'POST',
+     url: '/anonymousUser-cart/',
+     headers: {
+         'X-CSRFToken': csrftoken,
+     },
+     data: {
+         'item': item_id,
+         'act': action,
+         
+     },
+     success: function (data) {
+         
+        data = JSON.parse(data)
+        console.log(data[1]['item'])
+        //  console.log( data.item, 'is added to cart', data.quantity, 'is added')
+        //  location.reload();
      }
 
  })
