@@ -83,7 +83,8 @@
                         <div class="form-floating">
                             <input type="number" class="form-control" id="phone" placeholder="Phone Number">
                             <label for="name">Phone Number</label>
-                    `    </div>
+                            `
+                        </div>
                     </div>
                     <div class="col-md-6">
                         <div class="form-floating">
@@ -105,7 +106,8 @@
                     </div>
                     <div class="col-12">
                         <div class="form-floating">
-                            <textarea class="form-control" placeholder="Special Request" id="special_req" style="height: 100px"></textarea>
+                            <textarea class="form-control" placeholder="Special Request" id="special_req"
+                                style="height: 100px"></textarea>
                             <label for="message">Special Request</label>
                         </div>
                     </div>
@@ -117,11 +119,12 @@
                     </div>
                 </div>
             </form>
+            
             <div class="shadow-sm p-3 mb-5 bg-body-tertiary" id="payment-info">
                 <h4>Payment options</h4>
                 <hr>
-                <span class="fs-5">Paypal</span>
-                <div class="btn btn-danger" id="make-payment">Make payment</div>
+                <button id="rzp-button1">Pay with Razorpay</button>
+                <!-- <div class="btn btn-danger" id="make-payment">Make payment</div> -->
             </div>
 
         </div>
@@ -140,7 +143,7 @@
                             <img class="flex-shrink-0 img-fluid rounded" src=" /static/{{item.item.item_image}}"
                                 alt="menu_item_image" style="width: 70px; max-height: 45px;">
                             <div class="mx-2">
-                                <div class="fs-6">{{item.item}}</div>
+                                <div class="fs-6">{{item.item.item_name}}</div>
                                 <span data-item="{{item.item_id}}" data-action="remove"
                                     class="text-danger fs-6 update-cart hand-cursor">Remove</span>
                             </div>
@@ -168,6 +171,49 @@
 
 </div>
 
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+<script>
+    var options = {
+        "key": "rzp_test_4XWHh1u1TNMehB", // Enter the Key ID generated from the Dashboard
+        "amount": "{{payment.amount}}", // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+        "currency": "INR",
+        "name": "Restoran",
+        "description": "Purchase",
+        "image": "https://example.com/your_logo",
+        "order_id": "{{payment.id}}", //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
+        "handler": function (response){
+            submitFormData(response)
+
+        },
+        "prefill": {
+            "name": "Gaurav Kumar",
+            "email": "gaurav.kumar@example.com",
+            "contact": "9000090000"
+        },
+        "notes": {
+            "address": "Razorpay Corporate Office"
+        },
+        "theme": {
+            "color": "#3399cc"
+        }
+    };
+    var rzp1 = new Razorpay(options);
+    rzp1.on('payment.failed', function (response){
+            alert(response.error.code);
+            alert(response.error.description);
+            alert(response.error.source);
+            alert(response.error.step);
+            alert(response.error.reason);
+            alert(response.error.metadata.order_id);
+            alert(response.error.metadata.payment_id);
+    });
+    document.getElementById('rzp-button1').onclick = function(e){
+        rzp1.open();
+        e.preventDefault();
+    }
+    </script>
+
 <script>
 
     $('#payment-info').hide();
@@ -177,11 +223,12 @@
 
     var form = $('#form');
 
-    csrftoken = form.$('input[name=csrftoken]').val();
+    csrftoken = $('input[name=csrfmiddlewaretoken]').val();
 
     var option = '{{option}}';
 
     if (user != 'AnonymousUser') {
+        console.log('anno')
         $('#user-info').hide();
     }
 
@@ -202,8 +249,19 @@
 
     })
 
-    $('#make-payment').click(function () {
+    // $('#make-payment').click(function (e) {
+    //     submitFormData()
+
+    // })
+
+    function submitFormData(response) {
         console.log('payment button clicked')
+
+        var payment_info = {
+            'razorpay_order_id': response.razorpay_order_id,
+            'razorpay_payment_id': response.razorpay_payment_id,
+            'razorpay_signature': response.razorpay_signature
+        }
 
         var userFormData = {
             'name': null,
@@ -252,14 +310,16 @@
 
         $.ajax({
             type: 'POST',
-            url: '/process-order/',
+            url: 'success/',
             headers: {
                 'X-CSRFToken': csrftoken,
             },
             data: JSON.stringify({
+                'payment_info':payment_info,
                 'form': userFormData,
                 'delivery': deliveryInfo,
                 'dinning': dinningInfo,
+                'option': option
             }),
             success: function (data) {
                 // data = JSON.parse(data)
@@ -269,8 +329,7 @@
             }
 
         })
-
-    })
+    }
 
 </script>
 

@@ -14,8 +14,8 @@
 
 <!-- cart heading -->
 <div class="container">
-    <a href="/menu/" class="btn btn-light text-danger border-danger">← Continue ordering</a>
-    <div class="row m-auto g-3">
+    <a href="/menu/" class="btn btn-light text-danger border-danger mb-2 row">← Continue ordering</a>
+    <div class="row">
         <div class="col-5 bg-danger h5 text-start text-white p-2">Product</div>
         <div class="col-2 bg-danger h5 text-start text-white p-2">Price</div>
         <div class="col-2 bg-danger h5 text-start text-white p-2 text-center">Quantity</div>
@@ -37,7 +37,7 @@
                 <img class="flex-shrink-0 img-fluid rounded" src=" /static/{{item.item.item_image}}"
                     alt="menu_item_image" style="width: 80px; max-height: 50px;">
                 <div class="mx-2">
-                    <span class="h5">{{item.item}}</span><br>
+                    <span class="h5">{{item.item.item_name}}</span><br>
                     <span data-item="{{item.item_id}}" data-action="remove"
                         class="text-danger fs-6 update-cart hand-cursor">Remove</span>
                 </div>

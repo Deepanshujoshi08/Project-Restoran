@@ -5,6 +5,8 @@ from django.db.models import Q
 from django.http import HttpResponse,JsonResponse
 import json
 import datetime
+from .utils import cart_check, cookieCart, cartData, guestOrder
+import razorpay
 # Create your views here.
 
 
@@ -20,17 +22,17 @@ def update_cart(request):
     print('item_id:', item_id, 'action:', action)
 
     item = Menu.objects.get(id = item_id)
-    user = request.user
-    order, created = Order.objects.get_or_create(user = user, complete = False)
+    customer = request.user.customer
+    order, created = Order.objects.get_or_create(customer = customer, complete = False)
     cartItem, created = Cart_items.objects.get_or_create(order = order, item = item)
 
     if action == 'add':
-        update_qnt = cartItem.quantity + 1
-        cartItem.quantity = update_qnt
+        update_quantity = cartItem.quantity + 1
+        cartItem.quantity = update_quantity
         cartItem.save()
     elif action == 'subtract':
-        update_qnt = cartItem.quantity - 1
-        cartItem.quantity = update_qnt
+        update_quantity = cartItem.quantity - 1
+        cartItem.quantity = update_quantity
         cartItem.save()
     elif action == 'remove':
         cartItem.delete()
@@ -66,69 +68,58 @@ def AnonymousUser_cart(request):
     print('item_id:', item_id, 'action:', action)
 
     item = Menu.objects.get(id = item_id)  
- 
 
-    data = Object()
-    data.item = item
-    data.quantity = 1
-    data = data.toJSON()
+    item_cookie = request.COOKIES.get('cart')
 
-    list = []
+    
 
+    if item_cookie:
+        list = json.loads(item_cookie)
+        
+        if list != []:
+            x = 0
+            for item in list:
+                x += 1
+                print(item)
+                if item['item'] == item_id:
+                    quantity = item['quantity']
+                    if action == 'add':
+                        item['quantity'] = quantity + 1
+                    
+                    elif action == 'subtract':
+                        item['quantity'] = quantity - 1
+                    
+                    elif action == 'remove':
+                        list.remove(item)    
+                    break
+                else:
+                    if x < len(list):
+                        continue
+                    else:
+                        list.append({'item': item_id, 'quantity': 1})
+                        break
+        else:
+           list.append({'item': item_id, 'quantity': 1})
+
+                
+    else:
+        list = [
+            {'item': item_id, 'quantity': 1}
+        ]
+    
     list = json.dumps(list)
-
-    response = JsonResponse(list, safe=False)
+    response = HttpResponse('list added')
     response.set_cookie('cart', list)
     return response
 
 
 
-def add_to_cart(request):
-    user = request.user
-
-    if user:
-        id = request.POST.get('item_id', None)
-        print('the product id :', id, ' of', user.username)
-        qnt = request.POST.get('quantity', None)
-        print('the product quantity :', qnt , ' of', user.username)
-        menu = Menu.objects.get(id = id)
-
-        cart = Cart_items.objects.filter(
-            Q(user = user)&
-            Q(item = menu)
-        )
-        
-        if cart.exists():
-            # print("Cart already exists")
-            # cart = Cart_items.objects.get(user = user , item = menu.item_name)
-            cart.update(quantity = qnt)
-        else:
-            order = Cart_items.objects.create(user = user, item = menu, quantity = qnt) 
-            order.save()
-
-            uptaded_cart = Cart_items.objects.filter(user = request.user.id)
-            request.session['cart'] = len(uptaded_cart)
-        
-            print('length of cart' + str(request.session['cart']))
-        
-        cart = Cart_items.objects.get(
-            Q(user = user)&
-            Q(item = menu)
-        )
-        data = {
-            'quantity': cart.quantity
-        }
-        return HttpResponse(data)
-    
-    else:
-        return redirect('/login/')
-
 
 def remove_cart_item(request, id):
-    user = request.user
+    customer = request.user.customer
     
     item = Menu.objects.get(id = id)
-    order = Order.objects.get(user = user, complete = False)
+    order = Order.objects.get(customer = customer, complete = False)
     cart_item = Cart_items.objects.get(order = order, item = item)
 
     
@@ -142,13 +133,9 @@ def remove_cart_item(request, id):
 
 
 def cart(request):
-    if request.user.is_authenticated:
-        user = request.user
-        order, created = Order.objects.get_or_create(user=user, complete= False)
-        items = order.cart_items_set.all()
-    else:
-        items = []
-        order = {'get_cart_total': 0, 'get_cart_items': 0}
+    data = cartData(request)
+    order = data['order']
+    items = data['items']
 
     context = {
         'title': 'Cart',
@@ -161,63 +148,70 @@ def cart(request):
     return render(request, 'cart.html', context)
 
 
+from django.conf import settings
 def checkout(request):
-    option = request.GET.get('option')
-    if request.user.is_authenticated:
-        user = request.user
-        order, created = Order.objects.get_or_create(user=user, complete= False)
-        order.order_option = option
-        order.save()
-        items = order.cart_items_set.all()
-    else:
-        items = []
-        order = {'get_cart_total': 0, 'get_cart_items': 0}
+    data = cartData(request)
+    order = data['order']
+    items = data['items']
+    option = data['option']
+    payment = data['payment']
+
 
     context = {
         'title': 'Checkout',
         'items': items,
         'order': order,
-        'option': option
+        'option': option,
+        'payment': payment
     }
     return render(request, 'checkout.html', context)
 
-
-def process_order(request):
-
-    transaction_id = datetime.datetime.now().timestamp()
+def payment_success(request):
 
     data = json.loads(request.body)
 
-    if request.user.is_authenticated:
-        user = request.user
-        order, created = Order.objects.get_or_create(user=user, complete=False)
-        total = float(data['form']['total'])
-        order.transaction_id = transaction_id
+    order_id = data['payment_info']['razorpay_order_id']
+    payment_id = data['payment_info']['razorpay_payment_id']
+    signature = data['payment_info']['razorpay_signature']
+    
 
-        if total == order.get_cart_total:
-            order.complete = True
+    if request.user.is_authenticated:
+        customer = request.user.customer
+        order, created = Order.objects.get_or_create(razorpay_order_id=order_id, complete=False)
+        order.razorpay_payment_id = payment_id
+        order.razorpay_payment_signature = signature
+        order.complete = True
         order.save()
 
-        if order.order_option == 'delivery':
-            Delivery_address.objects.create(
-                user=user,
-                order=order,
-                address = data['delivery']['address'],
-                city = data['delivery']['city'],
-                state = data['delivery']['state'],
-                pincode = data['delivery']['pincode'],
-            ) 
-        if order.order_option == 'dinning':
-            Dinning_info.objects.create(
-                user=user,
-                order=order,
-                name = data['dinning']['name'],
-                email = data['dinning']['email'],
-                phone = data['dinning']['phone'],
-                people = data['dinning']['people'],
-                date = data['dinning']['date'],
-                time = data['dinning']['time'],
-                special_req = data['dinning']['special_req'],
-            ) 
+    else:
+        customer,order = guestOrder(request, data)
+    
+    
 
-    return JsonResponse('payment received', safe=False)
+    if data['option'] == 'delivery':
+        Delivery_address.objects.create(
+            customer=customer,
+            order=order,
+            address = data['delivery']['address'],
+            city = data['delivery']['city'],
+            state = data['delivery']['state'],
+            pincode = data['delivery']['pincode'],
+        ) 
+    if data['option'] == 'dinning':
+        Dinning_info.objects.create(
+            customer = customer,
+            order=order,
+            name = data['dinning']['name'],
+            email = data['dinning']['email'],
+            phone = data['dinning']['phone'],
+            people = data['dinning']['people'],
+            date = data['dinning']['date'],
+            time = data['dinning']['time'],
+            special_req = data['dinning']['special_req'],
+        )     
+
+    
+    del request.session['cart']
+    response =  JsonResponse('payment received', safe=False)
+    response.delete_cookie('cart')
+    return response

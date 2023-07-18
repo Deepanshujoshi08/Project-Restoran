@@ -4,6 +4,7 @@ from django.conf import settings
 import random
 
 
+
 def send_email_to_user(user,email):
     queryset = otp.objects.filter(user = user)
 
@@ -24,6 +25,8 @@ def send_email_to_user(user,email):
     queryset2.save()
     
     
+
+
 
 # def orders(user,name):
 #         # user_obj = User.objects.all()

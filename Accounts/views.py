@@ -71,9 +71,14 @@ def login_page(request):
         else:
             login(request, user)
             
-            updated_cart = Order.objects.filter(user = request.user, complete = False)
+            customer, create = Customer.objects.get_or_create(email = request.user.email)
+            customer.user = request.user
+            customer.name = request.user.get_full_name()
+            print(request.user)
+            customer.save()
+            updated_cart = Order.objects.filter(customer = request.user.customer, complete = False)
             if updated_cart:
-                updated_cart = Order.objects.get(user = request.user, complete = False)
+                updated_cart = Order.objects.get(customer = request.user.customer, complete = False)
                 request.session['cart'] = updated_cart.get_cart_items        
             return redirect('/menu/')
     

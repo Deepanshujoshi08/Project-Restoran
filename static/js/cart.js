@@ -58,8 +58,10 @@ function AnonymousUserCart(item_id, action){
      },
      success: function (data) {
          
-        data = JSON.parse(data)
-        console.log(data[1]['item'])
+        // data = JSON.parse(data)
+        // console.log(data[1]['item'])
+        console.log(data)
+        location.reload();
         //  console.log( data.item, 'is added to cart', data.quantity, 'is added')
         //  location.reload();
      }
