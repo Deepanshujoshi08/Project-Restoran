@@ -201,8 +201,6 @@ def payment_success(request):
         Dinning_info.objects.create(
             customer = customer,
             order=order,
-            name = data['dinning']['name'],
-            email = data['dinning']['email'],
             phone = data['dinning']['phone'],
             people = data['dinning']['people'],
             date = data['dinning']['date'],

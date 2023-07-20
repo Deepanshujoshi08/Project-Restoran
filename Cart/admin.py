@@ -10,7 +10,7 @@ class Cart_itemsAdmin(admin.ModelAdmin):
 
 
 class Dinning_infoAdmin(admin.ModelAdmin):
-    list_display = ['order', 'name', 'people', 'date', 'time']
+    list_display = ['order', 'customer', 'people', 'date', 'time']
 
 class Delivery_addressAdmin(admin.ModelAdmin):
     list_display = ['order', 'customer', 'address']

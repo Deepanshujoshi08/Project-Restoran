@@ -27,7 +27,7 @@ class Order(models.Model):
     razorpay_payment_signature = models.CharField(max_length=100, null=True, blank=True)
 
     def __str__(self) -> str:
-        return str(self.customer)
+        return str(self.razorpay_order_id)
     
     @property
     def get_cart_total(self) -> str:
@@ -72,8 +72,6 @@ class Delivery_address(models.Model):
 class Dinning_info(models.Model):
     customer = models.ForeignKey(Customer, on_delete=models.SET_NULL, blank=True, null=True)
     order = models.ForeignKey(Order, on_delete=models.SET_NULL, blank=True, null=True)
-    name = models.CharField(max_length=200)
-    email = models.EmailField(blank=True)
     phone = models.CharField(max_length=15)
     people = models.IntegerField(default=1, blank=True, null=True)
     date = models.DateField()
@@ -81,4 +79,4 @@ class Dinning_info(models.Model):
     special_req = models.TextField(blank=True, null=True)
     
     def __str__(self) -> str:
-        return self.name
+        return str(self.customer)

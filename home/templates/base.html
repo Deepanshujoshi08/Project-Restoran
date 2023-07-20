@@ -108,12 +108,15 @@
                     <!-- <a href="/booking/" class="btn btn-danger py-2 px-4">Book A Table</a> -->
                     <!-- <div class="clr"></div> -->
                     <div class="d-flex">
+                        {% if request.session.cart %}
                         <a href="/cart/ ">
                             <div class="cart-icon h4 mt-1">
                                 <i class="fas fa-shopping-bag text-danger " aria-hidden="true"></i>
                                 <span class="cart-items">{{request.session.cart}}</span>
                             </div>
                         </a>
+                        {%else%}
+                        {% endif %}
                         {% if request.user.is_authenticated %}
                         <a href="/profile/" class="nav-item nav-link text-light my-auto pe-2"><span class="h4">
                                 <i class="fas fa-user "></i> </span>{{request.user}}
@@ -148,11 +151,8 @@
                 </div>
             </div>
 
-            {% elif title == 'Login' or title == 'Register' %}
+            {% elif title == 'Contact' or title == 'About' or title == 'Services' or title == 'Menu' %}
 
-
-
-            {% else %}
             <div class="py-5 bg-dark hero-header mb-5">
                 <div class="container text-center my-5 pt-5 pb-4">
                     <h1 class="display-3 text-white mb-3">{{title}}</h1>
@@ -165,6 +165,12 @@
                     </nav>
                 </div>
             </div>
+
+            {% else %}
+
+            
+
+
             {% endif %}
         </div>
 

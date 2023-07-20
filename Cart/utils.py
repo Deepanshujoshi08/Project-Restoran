@@ -83,9 +83,6 @@ def cartData(request):
         items = cookieData['items']
         payment = cookieData['payment']
    
-    print('*******')
-    print(payment)
-    print('*******')
 
     return {'items': items, 'order': cart_order, 'option': option, 'payment': payment}
 

@@ -69,12 +69,6 @@
                     <!-- <hr> -->
                     <div class="col-md-6">
                         <div class="form-floating">
-                            <input type="text" class="form-control" id="d-name" placeholder="Your Name">
-                            <label for="name">Your Name</label>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="form-floating">
                             <input type="number" class="form-control" id="people" placeholder="No Of People">
                             <label for="name">No Of People</label>
                         </div>
@@ -83,13 +77,6 @@
                         <div class="form-floating">
                             <input type="number" class="form-control" id="phone" placeholder="Phone Number">
                             <label for="name">Phone Number</label>
-                            `
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="form-floating">
-                            <input type="email" class="form-control" id="d-email" placeholder="Your Email">
-                            <label for="name">Your Email</label>
                         </div>
                     </div>
                     <div class="col-md-6">
@@ -237,9 +224,6 @@
         $('#payment-info').show();
     }
 
-    if (option == 'dinning') {
-        $('#user-info').hide();
-    }
 
     form.submit(function (e) {
         e.preventDefault();
@@ -277,8 +261,6 @@
         }
 
         var dinningInfo = {
-            'name': null,
-            'email': null,
             'phone': null,
             'people': null,
             'date': null,
@@ -294,8 +276,6 @@
         }
 
         if (option == 'dinning') {
-            dinningInfo.name = $('#d-name').val();
-            dinningInfo.email = $('#d-email').val();
             dinningInfo.phone = $('#phone').val();
             dinningInfo.people = $('#people').val();
             dinningInfo.date = $('#date').val();
