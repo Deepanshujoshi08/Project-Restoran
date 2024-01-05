@@ -6,6 +6,10 @@ from Menu.models import *
 import razorpay
 from django.conf import settings
 
+from django.core.mail import send_mail
+from django.conf import settings
+
+
 def cart_check(request):
     if request.COOKIES.get('cart'):
         cart = json.loads(request.COOKIES.get('cart'))
@@ -121,3 +125,18 @@ def guestOrder(request, data):
 
         )
     return customer, order
+
+
+
+def send_success_mail(customer,order):
+
+    email = customer.email
+    name = customer.name
+    subject = "Order from Restron"
+    
+    message = "Dear " + name + ", your order is placed."
+    from_email = settings.EMAIL_HOST_USER
+    recipient_list = [email]
+
+    send_mail(subject, message, from_email, recipient_list)
+    

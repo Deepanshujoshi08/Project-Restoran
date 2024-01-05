@@ -19,12 +19,25 @@ def register(request):
         username = request.POST.get('username')
         email = request.POST.get('email')
         password = request.POST.get('password')
+        cpassword = request.POST.get('cpassword')
 
         user = User.objects.filter(username = username)
         
         if user.exists():
             messages.info(request, 'Username already taken')
             return redirect('/register/')
+        
+        emailCheck = User.objects.filter(email = email)
+
+        if emailCheck.exists():
+            messages.info(request, 'Email already taken')
+            return redirect('/register/')
+        
+
+
+        if password != cpassword:
+            messages.warning(request, 'Password not matched.')
+            return redirect('/register')
         
         send_email_to_user(username,email)        
         user = User.objects.create(first_name = first_name, last_name = last_name,  username = username, email = email, is_active = False)
@@ -125,6 +138,16 @@ def forget_pass(request):
     
     return render(request, 'forget_pass.html')
 
+def forger_password_user(request):
+    user = request.user.username
+
+    query = User.objects.get(username = user)
+
+    send_email_to_user(user, query.email)
+    messages.success(request, 'otp sent successfully to email ')
+    return redirect("/otp/?username="+user)
+
+
 
 
 def otp_verify(request): 
@@ -158,6 +181,8 @@ def otp_verify(request):
     return render(request, 'otp.html',{'username':username})
 
 
+
+
 def change_password(request):
     if request.method == 'POST':
         user = request.session.get('user')
@@ -176,6 +201,7 @@ def change_password(request):
         messages.success(request, 'Password changed successfully')
         return redirect('/login/')
     
+
     return render(request, 'change_password.html')
 
 
@@ -191,6 +217,18 @@ def profile(request):
     return render(request,'profile.html')
 
 def update_profile(request):
+    if request.method == 'POST':
+        fname = request.POST.get('first_name')
+        lname = request.POST.get('last_name')
+        username = request.POST.get('username')
+        email = request.POST.get('email')
+
+        User.objects.get(username = username)
+        User.first_name = fname
+        User.last_name = lname
+        User.email = email
+        User.save()
+
     return render(request,'update_profile.html')
 
 def edit_booking(request):

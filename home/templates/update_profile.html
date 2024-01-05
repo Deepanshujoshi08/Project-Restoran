@@ -5,7 +5,6 @@
 {%load static%}
 
 
-
 <div class="py-5 bg-dark hero-header mb-5">
     <div class="container  my-5 pt-5 pb-4">
         <div class="col-md-5 m-auto nav_bg_clr d-flex align-items-center  wow fadeInDown">
@@ -20,9 +19,14 @@
                         <h5 class="col-4 text-danger">User Name :</h5>
                         <h5 class="col-8 text-light">{{request.user}}</h5>
 
-                        <h5 class="col-4 text-danger">Email Id :</h5>
-                        <h6 class="col-8 text-light">{{request.user.email}}</h6>
 
+                        <div class="col-md-12">
+                            <div class="form-floating">
+                                <input type="text" name="first_name" value="{{request.user.username}}" class="form-control" id="name" placeholder="First name" disabled>
+                                <label>Username</label>
+                            </div>
+                        </div>
+                        
                         <div class="col-md-6">
                             <div class="form-floating">
                                 <input type="text" name="first_name" value="{{request.user.first_name}}" class="form-control" id="name" placeholder="First name">
@@ -37,22 +41,16 @@
                         </div>
                         <div class="col-md-12">
                             <div class="form-floating">
-                                <input type="number" name="number" value="{{request.user.number}}" class="form-control" id="number" placeholder="Email Id">
-                                <label >Mobile Number</label>
+                                <input type="email" name="email" class="form-control" value="{{request.user.email}}" placeholder="Change password">
+                                <label>Email</label>
                             </div>
                         </div>
-                        <div class="col-md-12">
-                            <div class="form-floating">
-                                <input type="password" name="password" class="form-control" id="password" placeholder="Change password">
-                                <label>Change Password</label>
-                            </div>
-                        </div>
-                        <div class="col-md-12">
+                        <!-- <div class="col-md-12">
                             <div class="form-floating">
                                 <input type="file" class="form-control" >
                                 <label>Choose Profile image</label>
                             </div>
-                        </div>
+                        </div> -->
                         <div class="col-md-12">
                             <div class="form-floating">
                                 <input type="checkbox" required> <span class="text-white">I accept <a href="/additional/" class="text-danger">Term of Use</a></span>

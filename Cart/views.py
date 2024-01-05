@@ -5,7 +5,7 @@ from django.db.models import Q
 from django.http import HttpResponse,JsonResponse
 import json
 import datetime
-from .utils import cart_check, cookieCart, cartData, guestOrder
+from .utils import *
 import razorpay
 # Create your views here.
 
@@ -186,7 +186,7 @@ def payment_success(request):
     else:
         customer,order = guestOrder(request, data)
     
-    
+    send_success_mail(customer,order)
 
     if data['option'] == 'delivery':
         Delivery_address.objects.create(
